@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PlayStation Store</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* Tokens del design system real de PlayStation (colores, radios, tipografía). */
+  :root{
+    --bg:#000000; --surface:#181818; --surface2:#252525; --elev:#1f1f1f;
+    --ink:#ffffff; --muted:#a8a8a8; --soft:#787878;
+    --ps:#0070d1; --ps-hover:#1a85e0; --ps-press:#005ba8; --ps-deep:#003d75; --ps-tint:rgba(0,112,209,.16);
+    --line:rgba(255,255,255,.10); --line2:rgba(255,255,255,.20);
+    --ok:#00b890; --warn:#ffa61a;
+    --r:4px; --r6:6px; --r8:8px;
+    --font:'Inter','Helvetica Neue',Arial,system-ui,sans-serif;
+    --mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{background:var(--bg);color:var(--ink);font-family:var(--font);-webkit-font-smoothing:antialiased;}
+  a{color:inherit;text-decoration:none;}
+
+  /* ---- NAV ---- */
+  .nav{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:26px;
+    padding:14px 40px;background:rgba(0,0,0,.72);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:800;font-size:17px;letter-spacing:.3px;}
+  .shapes{display:flex;gap:5px;align-items:center;}
+  .shapes span{font-size:13px;line-height:1;color:var(--ps);filter:drop-shadow(0 0 6px rgba(0,112,209,.5));}
+  .shapes .x{color:#b7c6dd;} .shapes .sq{color:#b7c6dd;}
+  .nav .links{display:flex;gap:22px;font-size:14px;font-weight:600;color:var(--muted);}
+  .nav .links a:hover{color:var(--ink);}
+  .nav .links a.on{color:var(--ink);}
+  .nav .right{margin-left:auto;display:flex;align-items:center;gap:16px;}
+  .chip{font-family:var(--mono);font-size:12px;color:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 12px;}
+  .icon-btn{width:38px;height:38px;border-radius:999px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:17px;border:1px solid var(--line);}
+
+  .shell{max-width:1240px;margin:0 auto;padding:0 40px 90px;}
+
+  /* ---- HERO destacado ---- */
+  .hero{position:relative;margin:30px 0 10px;border-radius:var(--r8);overflow:hidden;border:1px solid var(--line);
+    min-height:360px;display:flex;align-items:flex-end;}
+  .hero .art{position:absolute;inset:0;}
+  .hero .scrim{position:absolute;inset:0;background:
+    linear-gradient(90deg,rgba(0,0,0,.88) 0%,rgba(0,0,0,.55) 42%,rgba(0,0,0,.05) 100%),
+    linear-gradient(0deg,rgba(0,0,0,.75),transparent 60%);}
+  .hero .content{position:relative;padding:40px 44px;max-width:620px;}
+  .hero .kicker{font-family:var(--mono);font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ps);margin-bottom:12px;}
+  .hero h1{margin:0 0 10px;font-size:52px;font-weight:900;line-height:1.02;letter-spacing:-.02em;}
+  .hero .meta{display:flex;gap:9px;flex-wrap:wrap;margin:14px 0 18px;}
+  .hero .row{display:flex;align-items:center;gap:16px;}
+  .price{font-size:22px;font-weight:800;}
+  .pill{background:var(--surface2);border-radius:999px;font-size:12.5px;font-weight:700;letter-spacing:.03em;
+    padding:5px 13px;color:#d6dee8;border:1px solid var(--line);}
+
+  .btn{font-family:var(--font);font-size:14px;font-weight:700;letter-spacing:.04em;color:#fff;background:var(--ps);
+    border:0;border-radius:var(--r);padding:13px 30px;cursor:pointer;transition:background .18s,transform .18s;}
+  .btn:hover{background:var(--ps-hover);}
+  .btn:active{background:var(--ps-press);transform:translateY(1px);}
+  .btn.ghost{background:transparent;border:1px solid var(--line2);}
+  .btn.ghost:hover{background:rgba(255,255,255,.06);}
+  .btn.owned{background:var(--surface2);color:var(--ok);cursor:default;border:1px solid var(--line);}
+  .btn.owned:hover{background:var(--surface2);}
+
+  /* ---- Secciones ---- */
+  .sec-head{display:flex;align-items:baseline;gap:14px;margin:40px 0 18px;}
+  .sec-head h2{font-size:24px;font-weight:800;margin:0;letter-spacing:-.01em;}
+  .sec-head .count{font-family:var(--mono);font-size:13px;color:var(--soft);}
+
+  /* ---- Grid de tiles ---- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:18px;}
+  .tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r6);overflow:hidden;
+    display:flex;flex-direction:column;transition:border-color .18s,transform .18s,box-shadow .18s;}
+  .tile:hover{border-color:var(--ps);box-shadow:0 0 0 1px var(--ps),0 14px 34px rgba(0,0,0,.5);transform:translateY(-3px);}
+  .tile .art{position:relative;aspect-ratio:3/4;overflow:hidden;}
+  .tile .art .logo{position:absolute;left:14px;right:14px;bottom:13px;font-weight:900;font-size:21px;line-height:1.02;
+    letter-spacing:-.02em;text-shadow:0 2px 14px rgba(0,0,0,.6);}
+  .tile .art .artscrim{position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 55%);}
+  .tile .art .marks{position:absolute;top:12px;right:13px;font-size:14px;opacity:.5;letter-spacing:3px;}
+  .tile .body{padding:13px 15px 16px;display:flex;flex-direction:column;gap:7px;flex:1;}
+  .tile .ttl{font-size:15px;font-weight:700;line-height:1.2;}
+  .tile .gen{font-size:12.5px;color:var(--muted);}
+  .tile .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:6px;}
+  .tile .foot .price{font-size:16px;}
+  .tile .buy{font-family:var(--font);font-size:12.5px;font-weight:700;letter-spacing:.03em;color:#fff;background:var(--ps);
+    border:0;border-radius:var(--r);padding:9px 15px;cursor:pointer;transition:background .18s;white-space:nowrap;}
+  .tile .buy:hover{background:var(--ps-hover);}
+  .tile .buy.owned{background:transparent;color:var(--ok);border:1px solid var(--line);cursor:default;}
+
+  /* ---- Biblioteca ---- */
+  .lib{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;}
+  .libitem{display:flex;align-items:center;gap:13px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r6);padding:11px 13px;}
+  .libitem .mini{width:46px;height:60px;border-radius:var(--r);flex:none;overflow:hidden;position:relative;}
+  .libitem .mt{font-size:14px;font-weight:700;line-height:1.15;}
+  .libitem .mg{font-size:12px;color:var(--muted);margin-top:3px;}
+  .libitem .owned-tag{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--ok);letter-spacing:.04em;}
+  .empty{color:var(--soft);font-size:15px;border:1px dashed var(--line2);border-radius:var(--r8);padding:26px;text-align:center;}
+
+  .skel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r6);aspect-ratio:3/4;position:relative;overflow:hidden;}
+  .skel::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent);animation:sh 1.2s infinite;}
+  @keyframes sh{100%{transform:translateX(100%);}}
+
+  /* ---- Toast ---- */
+  .toast{position:fixed;right:26px;bottom:26px;z-index:90;display:flex;align-items:center;gap:12px;
+    background:var(--elev);border:1px solid var(--line2);border-left:3px solid var(--ok);border-radius:var(--r6);
+    padding:14px 18px;min-width:280px;box-shadow:0 18px 50px rgba(0,0,0,.55);
+    transform:translateY(20px);opacity:0;transition:transform .28s,opacity .28s;pointer-events:none;}
+  .toast.show{transform:translateY(0);opacity:1;}
+  .toast .tk{font-weight:800;font-size:14px;}
+  .toast .td{font-size:12.5px;color:var(--muted);margin-top:2px;}
+  .toast .flow{font-family:var(--mono);font-size:11px;color:var(--soft);margin-top:5px;}
+
+  footer{max-width:1240px;margin:0 auto;padding:30px 40px;border-top:1px solid var(--line);
+    color:var(--soft);font-size:12.5px;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  footer .mono{font-family:var(--mono);}
+
+  @media(max-width:760px){
+    .nav{padding:12px 20px;gap:14px;} .nav .links{display:none;}
+    .shell{padding:0 20px 70px;} .hero h1{font-size:36px;} .hero .content{padding:28px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="brand">
+    <span class="shapes"><span class="tri">△</span><span class="ci">○</span><span class="x">✕</span><span class="sq">▢</span></span>
+    <span>PlayStation&nbsp;Store</span>
+  </div>
+  <div class="links">
+    <a class="on" href="#">Juegos</a>
+    <a href="#">Novedades</a>
+    <a href="#">Ofertas</a>
+    <a href="#">Suscripciones</a>
+  </div>
+  <div class="right">
+    <span class="chip">microservicios · gateway :8080</span>
+    <div class="icon-btn" title="Buscar">⌕</div>
+    <div class="icon-btn" title="Tu perfil">🙂</div>
+  </div>
+</nav>
+
+<div class="shell">
+
+  <!-- Destacado (se llena con el primer juego del catálogo) -->
+  <section class="hero" id="hero" style="display:none;">
+    <div class="art" id="heroArt"></div>
+    <div class="scrim"></div>
+    <div class="content">
+      <div class="kicker">Destacado de la semana</div>
+      <h1 id="heroTitle">—</h1>
+      <div class="meta" id="heroMeta"></div>
+      <div class="row">
+        <span class="price" id="heroPrice"></span>
+        <button class="btn" id="heroBuy">Agregar al carrito</button>
+        <button class="btn ghost">＋ Lista de deseos</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="sec-head">
+    <h2>Catálogo</h2>
+    <span class="count" id="catCount"></span>
+  </div>
+  <div class="grid" id="catalogo"></div>
+
+  <div class="sec-head">
+    <h2>Mi biblioteca</h2>
+    <span class="count" id="libCount"></span>
+  </div>
+  <div class="lib" id="biblioteca"></div>
+
+</div>
+
+<footer>
+  <span>PlayStation Store · demo de microservicios — Programación Web · URL</span>
+  <span class="mono">gateway → catalogo :4001 · biblioteca :4002</span>
+</footer>
+
+<div class="toast" id="toast">
+  <span style="font-size:20px;">✓</span>
+  <div>
+    <div class="tk">Añadido a tu biblioteca</div>
+    <div class="td" id="toastGame"></div>
+    <div class="flow">gateway → catálogo → biblioteca</div>
+  </div>
+</div>
+
+<script>
+  // Paletas de "key art" por CSS — una portada distinta por juego, sin imágenes externas (anda offline).
+  var ARTE = [
+    ['#1b3a6b','#060c1a'], ['#3a1b5b','#0b0618'], ['#6b1b2e','#190509'],
+    ['#12514a','#04201d'], ['#5b4012','#190f05'], ['#2a2e3a','#0a0b10'],
+    ['#123f5b','#04141f'], ['#4a1b5b','#120618']
+  ];
+  function arteDe(id){
+    var c = ARTE[(id - 1) % ARTE.length] || ARTE[0];
+    return 'radial-gradient(120% 90% at 78% 12%,'+c[0]+' 0%,'+c[1]+' 70%),'
+         + 'linear-gradient(150deg,'+c[0]+',' + c[1] + ')';
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]; }); }
+
+  var owned = {}; // ids que ya están en la biblioteca
+  var CAT = [];   // último catálogo cargado (para saber el título al comprar)
+
+  function tileArt(j){
+    return '<div class="art" style="background:'+arteDe(j.id)+';">'
+         +   '<div class="marks">△ ○ ✕ ▢</div>'
+         +   '<div class="artscrim"></div>'
+         +   '<div class="logo">'+esc(j.titulo)+'</div>'
+         + '</div>';
+  }
+
+  async function cargarCatalogo(){
+    var cont = document.getElementById('catalogo');
+    cont.innerHTML = Array(6).fill('<div class="skel"></div>').join('');
+    var r = await fetch('/api/catalogo');
+    var juegos = await r.json();
+    CAT = juegos;
+    document.getElementById('catCount').textContent = juegos.length + ' juegos';
+
+    // Hero con el primer juego
+    if(juegos.length){
+      var h = juegos[0];
+      document.getElementById('hero').style.display = 'flex';
+      document.getElementById('heroArt').style.background = arteDe(h.id);
+      document.getElementById('heroTitle').textContent = h.titulo;
+      document.getElementById('heroMeta').innerHTML = '<span class="pill">'+esc(h.genero)+'</span><span class="pill">PS5</span><span class="pill">Un jugador</span>';
+      document.getElementById('heroPrice').textContent = '$'+h.precio;
+      var hb = document.getElementById('heroBuy');
+      hb.onclick = function(){ comprar(h.id); };
+    }
+
+    cont.innerHTML = juegos.map(function(j){
+      var yo = owned[j.id];
+      return '<div class="tile">'
+        + tileArt(j)
+        + '<div class="body">'
+        +   '<div class="ttl">'+esc(j.titulo)+'</div>'
+        +   '<div class="gen">'+esc(j.genero)+'</div>'
+        +   '<div class="foot">'
+        +     '<span class="price">$'+j.precio+'</span>'
+        +     (yo
+              ? '<button class="buy owned">En biblioteca ✓</button>'
+              : '<button class="buy" onclick="comprar('+j.id+')">Comprar</button>')
+        +   '</div>'
+        + '</div>'
+        + '</div>';
+    }).join('');
+  }
+
+  async function cargarBiblioteca(){
+    var r = await fetch('/api/biblioteca');
+    var mios = await r.json();
+    owned = {};
+    mios.forEach(function(j){ if(j && j.id!=null) owned[j.id] = true; });
+    document.getElementById('libCount').textContent = mios.length + (mios.length===1?' juego':' juegos');
+    var el = document.getElementById('biblioteca');
+    if(!mios.length){
+      el.innerHTML = '<div class="empty" style="grid-column:1/-1;">Todavía no compraste nada. Comprá un juego arriba y mirá cómo aparece acá — el gateway lo guardó en el servicio <b>biblioteca</b>.</div>';
+      return;
+    }
+    el.innerHTML = mios.map(function(j){
+      return '<div class="libitem">'
+        + '<div class="mini" style="background:'+arteDe(j.id)+';"></div>'
+        + '<div><div class="mt">'+esc(j.titulo)+'</div><div class="mg">'+esc(j.genero)+'</div></div>'
+        + '<span class="owned-tag">INSTALAR</span>'
+        + '</div>';
+    }).join('');
+  }
+
+  var toastT;
+  function toast(nombre){
+    var t = document.getElementById('toast');
+    document.getElementById('toastGame').textContent = nombre;
+    t.classList.add('show');
+    clearTimeout(toastT);
+    toastT = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+  }
+
+  async function comprar(id){
+    var r = await fetch('/api/comprar/' + id, { method:'POST' });
+    if(r.ok){
+      var g = CAT.find(function(x){ return x.id === id; });
+      toast(g ? g.titulo : 'Tu juego');
+    }
+    await cargarBiblioteca();
+    await cargarCatalogo();
+  }
+
+  cargarBiblioteca().then(cargarCatalogo);
+</script>
+</body>
+</html>

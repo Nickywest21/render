@@ -1,0 +1,29 @@
+# compose.yml — SOLUCIÓN del lab (PlayStation Store).
+# Levanta los 3 microservicios con un solo comando: docker compose up --build
+#
+# Claves que se enseñan acá:
+#  - services: cada microservicio es un service.
+#  - build: la carpeta donde está su Dockerfile.
+#  - ports: SOLO el gateway publica un puerto al exterior (host:contenedor).
+#  - environment: le pasamos al gateway las URLs de los otros servicios.
+#  - depends_on: el gateway arranca después de catalogo y biblioteca.
+# Los servicios se encuentran entre sí por su NOMBRE (catalogo, biblioteca):
+# Docker crea una red interna por defecto y resuelve esos nombres solo.
+
+services:
+  gateway:
+    build: ./gateway
+    ports:
+      - "8080:8080"
+    environment:
+      - CATALOGO_URL=http://catalogo:4001
+      - BIBLIOTECA_URL=http://biblioteca:4002
+    depends_on:
+      - catalogo
+      - biblioteca
+
+  catalogo:
+    build: ./catalogo
+
+  biblioteca:
+    build: ./biblioteca

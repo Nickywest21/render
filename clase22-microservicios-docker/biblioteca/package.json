@@ -1,0 +1,13 @@
+{
+  "name": "ps-biblioteca",
+  "version": "1.0.0",
+  "description": "Microservicio Biblioteca · PlayStation Store · Clase 22 Programación Web URL",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.4",
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,22 @@
+# compose.ejercicio.yml — PARA LLENAR EN CLASE (guiado por el profe).
+# Reemplazá cada ____ (TODO). La solución está en compose.yml.
+# Al terminar, renombralo a compose.yml y corré: docker compose up --build
+
+services:
+
+  gateway:
+    build: ./gateway
+    ports:
+      - "____:____"                       # TODO: publicá el puerto del gateway (host:contenedor)
+    environment:
+      - CATALOGO_URL=http://____:4001     # TODO: nombre del servicio del catálogo
+      - BIBLIOTECA_URL=http://____:4002   # TODO: nombre del servicio de la biblioteca
+    depends_on:
+      - ____                              # TODO: ¿de qué servicio depende?
+      - ____                              # TODO
+
+  catalogo:
+    build: ____                           # TODO: carpeta del Dockerfile del catálogo
+
+  biblioteca:
+    build: ____                           # TODO: carpeta del Dockerfile de la biblioteca

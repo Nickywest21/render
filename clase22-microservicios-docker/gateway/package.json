@@ -1,0 +1,12 @@
+{
+  "name": "ps-gateway",
+  "version": "1.0.0",
+  "description": "Gateway + mini web · PlayStation Store · Clase 22 Programación Web URL",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
